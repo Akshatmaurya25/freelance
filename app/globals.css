@@ -6,13 +6,16 @@
   --color-line: #23232d;
   --color-ink: #f1f1f4;
   --color-muted: #8c8c9a;
-  --color-accent: #c6ff3d;
+  --color-accent: #ef233c; /* brand red, from the cafe's logo */
+  --color-accent-2: #ff8a3d;
+  --color-on-accent: #ffffff;
   --font-display: var(--font-chakra), ui-sans-serif, system-ui;
   --font-sans: var(--font-inter), ui-sans-serif, system-ui;
 }
 
 html {
   color-scheme: dark;
+  overflow-x: clip; /* off-screen fly-in elements must never cause a sideways scrollbar */
   scroll-behavior: smooth;
 }
 
@@ -28,4 +31,209 @@ body {
     linear-gradient(90deg, var(--color-line) 1px, transparent 1px);
   background-size: 48px 48px;
   mask-image: radial-gradient(ellipse at top, black 20%, transparent 70%);
+}
+
+/* neon floor receding into the distance */
+.grid-floor {
+  position: absolute;
+  inset: auto -50% -5% -50%;
+  height: 55%;
+  background-image:
+    linear-gradient(color-mix(in oklab, var(--color-accent) 55%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--color-accent) 55%, transparent) 1px, transparent 1px);
+  background-size: 64px 64px;
+  transform: perspective(420px) rotateX(68deg);
+  transform-origin: bottom;
+  mask-image: linear-gradient(to top, black 5%, transparent 85%);
+  animation: grid-run 1.6s linear infinite;
+}
+@keyframes grid-run {
+  to {
+    background-position: 0 64px;
+  }
+}
+
+.orb {
+  position: absolute;
+  width: 45vmax;
+  height: 45vmax;
+  border-radius: 9999px;
+  filter: blur(90px);
+  animation: drift 14s ease-in-out infinite alternate;
+}
+@keyframes drift {
+  to {
+    transform: translate(8vw, 6vh) scale(1.15);
+  }
+}
+
+.marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 32s linear infinite;
+}
+.marquee[data-dir="right"] {
+  animation-direction: reverse;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--color-muted);
+}
+
+/* pointer-following shine; --gx/--gy set by the tilt handler */
+.glare::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at var(--gx, 50%) var(--gy, 50%), rgb(255 255 255 / 0.22), transparent 55%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.glare:hover::after {
+  opacity: 1;
+}
+
+.logo-draw path {
+  animation: draw 1.8s cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+@keyframes draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+.flip-in {
+  animation: flip-in 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes flip-in {
+  from {
+    opacity: 0;
+    transform: perspective(1000px) rotateX(-30deg) translateY(60px) scale(0.94);
+  }
+}
+
+.qr-scan {
+  animation: scan 2.2s ease-in-out infinite alternate;
+}
+@keyframes scan {
+  from {
+    top: -2rem;
+  }
+  to {
+    top: 100%;
+  }
+}
+
+/* booking confirmation */
+.draw {
+  stroke-dasharray: 1;
+  animation: draw 0.6s cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+.pop-in {
+  transform-origin: center;
+  animation: pop-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes pop-in {
+  from {
+    transform: scale(0);
+  }
+}
+.fade-up {
+  animation: fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+    filter: blur(6px);
+  }
+}
+.confetti {
+  animation: burst 1.6s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+@keyframes burst {
+  0% {
+    transform: translate(0, 0) scale(0);
+    opacity: 1;
+  }
+  55% {
+    transform: translate(var(--x), var(--y)) rotate(calc(var(--r) / 2));
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--x), calc(var(--y) + 180px)) rotate(var(--r));
+    opacity: 0;
+  }
+}
+.tile-in {
+  animation: tile-in 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes tile-in {
+  from {
+    opacity: 0;
+    transform: perspective(900px) rotateX(-18deg) translateY(40px) scale(0.96);
+  }
+}
+/* holographic sweep across the pass */
+.shine {
+  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.07) 45%, rgb(239 35 60 / 0.12) 50%, transparent 60%);
+  animation: shine 4.5s ease-in-out 1.2s infinite;
+  transform: translateX(-100%);
+}
+@keyframes shine {
+  60%,
+  100% {
+    transform: translateX(100%);
+  }
+}
+/* ticket notches where the stub tears off (stub is 15rem wide) */
+@media (min-width: 640px) {
+  .ticket {
+    --notch: radial-gradient(circle 14px at calc(100% - 15rem) 0, #0000 97%, #000);
+    mask: var(--notch), radial-gradient(circle 14px at calc(100% - 15rem) 100%, #0000 97%, #000);
+    mask-composite: intersect;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* hero items start hidden; GSAP reveals them on load */
+  [data-hero] {
+    visibility: hidden;
+    /* safety net: show anyway if JS is slow or fails */
+    animation: unhide 0s 3.5s forwards;
+  }
+  .logo-draw path {
+    stroke-dasharray: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grid-floor,
+  .orb,
+  .marquee,
+  .flip-in,
+  .qr-scan,
+  .draw,
+  .pop-in,
+  .fade-up,
+  .tile-in,
+  .shine {
+    animation: none;
+  }
+  .confetti {
+    display: none;
+  }
+}
+@keyframes unhide {
+  to {
+    visibility: visible;
+  }
 }

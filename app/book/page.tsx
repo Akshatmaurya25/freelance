@@ -1,20 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useState, useSyncExternalStore } from "react";
+import { Icon } from "@/components/Icon";
+import Confirmed, { type Booking } from "./Confirmed";
 import { CLOSE_HOUR, OPEN_HOUR, STATIONS, hourLabel, type Station } from "@/lib/stations";
-
-type Booking = {
-  id: string;
-  station: Station["id"];
-  date: string; // YYYY-MM-DD
-  start: number;
-  end: number; // inclusive start hour of the last slot
-  name: string;
-  phone: string;
-  total: number;
-};
 
 const KEY = "ig-bookings";
 const HOURS = Array.from({ length: CLOSE_HOUR - OPEN_HOUR }, (_, i) => OPEN_HOUR + i);
@@ -110,81 +100,19 @@ function Booker() {
     } catch {}
     setSel(null);
     setDone(b);
+    scrollTo({ top: 0 });
   }
 
-  if (done) {
-    const s = STATIONS.find((x) => x.id === done.station)!;
-    return (
-      <section className="mx-auto max-w-lg px-4 py-20">
-        <div className="rounded-xl border border-accent/40 bg-panel p-8">
-          <p className="text-sm font-medium tracking-widest text-accent uppercase">Booking confirmed</p>
-          <h1 className="mt-3 font-display text-3xl font-bold">See you there, {done.name.split(" ")[0]}!</h1>
-          <dl className="mt-8 grid grid-cols-2 gap-y-4 text-sm">
-            <dt className="text-muted">Booking ID</dt>
-            <dd className="font-display font-bold text-accent">{done.id}</dd>
-            <dt className="text-muted">Station</dt>
-            <dd>{s.name}</dd>
-            <dt className="text-muted">Date</dt>
-            <dd>
-              {new Date(done.date + "T00:00").toLocaleDateString("en-IN", {
-                weekday: "short",
-                day: "numeric",
-                month: "short",
-              })}
-            </dd>
-            <dt className="text-muted">Time</dt>
-            <dd>
-              {hourLabel(done.start)} – {hourLabel(done.end + 1)}
-            </dd>
-            <dt className="text-muted">Pay at counter</dt>
-            <dd className="font-semibold">₹{done.total}</dd>
-          </dl>
-          <p className="mt-8 text-sm text-muted">
-            Show this ID at the desk. Please arrive 5 minutes early.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <button
-              onClick={() => setDone(null)}
-              className="rounded-md bg-accent px-5 py-2.5 text-sm font-semibold text-bg hover:brightness-110"
-            >
-              Book another
-            </button>
-            <Link href="/" className="rounded-md border border-line px-5 py-2.5 text-sm font-semibold hover:border-muted">
-              Back home
-            </Link>
-          </div>
-        </div>
-      </section>
-    );
-  }
+  if (done) return <Confirmed booking={done} onAgain={() => setDone(null)} />;
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-12 sm:py-16">
       <h1 className="font-display text-4xl font-bold sm:text-5xl">Book a slot</h1>
-      <p className="mt-3 text-muted">Pick a station, a day, and one or more back-to-back hours.</p>
+      <p className="mt-3 text-muted">Pick a day, a station, and one or more back-to-back hours.</p>
 
-      {/* 1. Station */}
-      <h2 className="mt-10 mb-3 text-sm font-semibold tracking-widest text-muted uppercase">1 · Station</h2>
-      <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-2">
-        {STATIONS.map((s) => (
-          <button
-            key={s.id}
-            aria-pressed={s.id === station.id}
-            onClick={() => {
-              setStation(s);
-              setSel(null);
-            }}
-            className="shrink-0 rounded-md border border-line px-4 py-2.5 text-left transition hover:border-muted aria-pressed:border-accent aria-pressed:bg-accent/10"
-          >
-            <span className="block font-semibold">{s.name}</span>
-            <span className="text-xs text-muted">₹{s.pricePerHour}/hr</span>
-          </button>
-        ))}
-      </div>
-
-      {/* 2. Day */}
-      <h2 className="mt-8 mb-3 text-sm font-semibold tracking-widest text-muted uppercase">2 · Day</h2>
-      <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-2">
+      {/* 1. Day */}
+      <h2 className="mt-10 mb-3 text-sm font-semibold tracking-widest text-muted uppercase">1 · Day</h2>
+      <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:flex-wrap">
         {mounted
           ? days.map((d, i) => (
               <button
@@ -205,6 +133,30 @@ function Booker() {
           : Array.from({ length: 7 }, (_, i) => <div key={i} className="h-16 w-16 shrink-0 rounded-md bg-panel" />)}
       </div>
 
+      {/* 2. Station */}
+      <h2 className="mt-8 mb-3 text-sm font-semibold tracking-widest text-muted uppercase">2 · Station</h2>
+      <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:flex-wrap">
+        {STATIONS.map((s) => (
+          <button
+            key={s.id}
+            aria-pressed={s.id === station.id}
+            onClick={() => {
+              setStation(s);
+              setSel(null);
+            }}
+            className="group flex shrink-0 items-center gap-3 rounded-md border border-line px-4 py-2.5 text-left transition hover:border-muted aria-pressed:border-accent aria-pressed:bg-accent/10"
+          >
+            <span className="grid h-10 min-w-10 place-items-center rounded-md px-2 bg-white/5 text-muted transition group-aria-pressed:bg-accent group-aria-pressed:text-on-accent">
+              <Icon name={s.id} className={s.id === "ps4" ? "h-4" : "h-6"} />
+            </span>
+            <span>
+              <span className="block font-semibold">{s.name}</span>
+              <span className="text-xs text-muted">₹{s.pricePerHour}/hr</span>
+            </span>
+          </button>
+        ))}
+      </div>
+
       {/* 3. Time */}
       <h2 className="mt-8 mb-3 text-sm font-semibold tracking-widest text-muted uppercase">3 · Time</h2>
       <div className="grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-7">
@@ -219,7 +171,7 @@ function Booker() {
               disabled={disabled}
               aria-pressed={on}
               onClick={() => pick(h)}
-              className="h-16 rounded-md border border-line bg-panel transition enabled:hover:border-muted disabled:cursor-not-allowed disabled:opacity-35 aria-pressed:border-accent aria-pressed:bg-accent aria-pressed:text-bg"
+              className="h-16 rounded-md border border-line bg-panel transition enabled:hover:border-muted disabled:cursor-not-allowed disabled:opacity-35 aria-pressed:border-accent aria-pressed:bg-accent aria-pressed:text-on-accent"
             >
               <span className="block font-semibold">{hourLabel(h)}</span>
               <span className="block text-xs opacity-75">
@@ -266,7 +218,7 @@ function Booker() {
               className="mt-1 w-full rounded-md border border-line bg-bg px-3 py-2.5 outline-none focus:border-accent"
             />
           </label>
-          <button className="rounded-md bg-accent px-6 py-3 font-semibold text-bg hover:brightness-110">
+          <button className="rounded-md bg-accent px-6 py-3 font-semibold text-on-accent hover:brightness-110">
             Confirm booking
           </button>
         </form>
