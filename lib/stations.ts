@@ -20,20 +20,8 @@ export const STATIONS: Station[] = [
   { id: "vr", name: "VR Zone", tagline: "Step inside the game with full-motion VR", count: 1, pricePerHour: 150, unit: "headset" },
 ];
 
-export const OPEN_HOUR = 10; // 10 AM
-export const CLOSE_HOUR = 23; // 11 PM, last slot starts 10 PM
-
-export const CAFE = {
-  name: "Infinity Gaming",
-  area: "MP Nagar, Bhopal",
-  phone: "+91 00000 00000", // placeholder
-  mapsLink:
-    "https://www.google.com/maps/place/Infinity+gaming/@23.2330143,77.4363623,17z",
-  mapsEmbed: "https://maps.google.com/maps?q=23.2330143,77.4363623&z=17&output=embed",
-};
-
 export const hourLabel = (h: number) =>
-  `${h % 12 || 12} ${h < 12 ? "AM" : "PM"}`;
+  `${h % 12 || 12} ${h % 24 < 12 ? "AM" : "PM"}`;
 
 // Covers live in /public/games. `bg` + "contain" for logo-only art.
 export type Game = { title: string; img: string; on: string; bg?: string };

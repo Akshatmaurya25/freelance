@@ -1,5 +1,5 @@
 // Redrawn from the cafe's logo: a controller whose grips cross into an infinity loop.
-export function Logo({ className }: { className?: string }) {
+export function InfinityLogo({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 120 64" fill="none" aria-hidden className={className}>
       <defs>

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Chakra_Petch, Inter } from "next/font/google";
-import { CAFE } from "@/lib/stations";
-import { Logo } from "@/components/Logo";
+import { CAFE } from "@/lib/cafe";
+import { hourLabel } from "@/lib/stations";
 import "./globals.css";
 
 const chakra = Chakra_Petch({
@@ -19,19 +19,20 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: `${CAFE.name} | ${CAFE.area}`,
   description:
-    "PS5, Xbox, PS4, gaming PCs, snooker, racing sim and VR in MP Nagar, Bhopal. Book your slot online.",
+    `PS5, Xbox, PS4, gaming PCs, snooker, racing sim and VR in ${CAFE.area}. Book your slot online.`,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
+  const words = CAFE.name.split(" ");
   return (
     <html lang="en" className={`${chakra.variable} ${inter.variable} antialiased`}>
       <body className="flex min-h-dvh flex-col font-sans">
         <header className="sticky top-0 z-20 border-b border-line bg-bg/80 backdrop-blur">
           <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
             <Link href="/" className="flex items-center gap-2.5 font-display text-lg font-bold tracking-wide">
-              <Logo className="h-8 w-auto drop-shadow-[0_0_10px_rgb(239_35_60/.55)]" />
-              <span>
-                INFINITY <span className="text-muted">GAMING</span>
+              <CAFE.Logo className="h-8 w-auto drop-shadow-[0_0_10px_rgb(239_35_60/.55)]" />
+              <span className="uppercase">
+                {words.slice(0, -1).join(" ")} <span className="text-muted">{words.at(-1)}</span>
               </span>
             </Link>
             <Link
@@ -48,7 +49,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <p>
               © {CAFE.name}, {CAFE.area}
             </p>
-            <p>Open daily · 10 AM – 11 PM</p>
+            <p>
+              Open daily · {hourLabel(CAFE.open)} – {hourLabel(CAFE.close)}
+            </p>
           </div>
         </footer>
       </body>

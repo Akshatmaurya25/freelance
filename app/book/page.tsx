@@ -4,10 +4,11 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useState, useSyncExternalStore } from "react";
 import { Icon } from "@/components/Icon";
 import Confirmed, { type Booking } from "./Confirmed";
-import { CLOSE_HOUR, OPEN_HOUR, STATIONS, hourLabel, type Station } from "@/lib/stations";
+import { CAFE } from "@/lib/cafe";
+import { STATIONS, hourLabel, type Station } from "@/lib/stations";
 
 const KEY = "ig-bookings";
-const HOURS = Array.from({ length: CLOSE_HOUR - OPEN_HOUR }, (_, i) => OPEN_HOUR + i);
+const HOURS = Array.from({ length: CAFE.close - CAFE.open }, (_, i) => CAFE.open + i);
 
 const isoDate = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;

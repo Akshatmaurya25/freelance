@@ -2,7 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import Gallery from "@/components/Gallery";
 import { Icon } from "@/components/Icon";
-import { CAFE, STATIONS, hourLabel, type Station } from "@/lib/stations";
+import { CAFE } from "@/lib/cafe";
+import { STATIONS, hourLabel, type Station } from "@/lib/stations";
 
 export type Booking = {
   id: string;

@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { CAFE, STATIONS } from "@/lib/stations";
+import { CAFE } from "@/lib/cafe";
+import { STATIONS, hourLabel } from "@/lib/stations";
 import Hero from "@/components/Hero";
 import GameLibrary from "@/components/GameLibrary";
 import Snooker from "@/components/Snooker";
@@ -141,15 +142,21 @@ export default function Home() {
         <div className="mx-auto grid max-w-6xl gap-10 px-4 py-24 lg:grid-cols-2">
           <div data-reveal="left">
             <h2 className="font-display text-3xl font-bold sm:text-5xl">Find us</h2>
-            <p className="mt-4 text-lg">{CAFE.area}</p>
+            <p className="mt-4 text-lg">{CAFE.address}</p>
             <dl className="mt-8 space-y-4 text-sm">
               <div>
                 <dt className="text-muted">Hours</dt>
-                <dd className="mt-1">Every day, 10 AM – 11 PM</dd>
+                <dd className="mt-1">
+                  Every day, {hourLabel(CAFE.open)} – {hourLabel(CAFE.close)}
+                </dd>
               </div>
               <div>
                 <dt className="text-muted">Call</dt>
-                <dd className="mt-1">{CAFE.phone}</dd>
+                <dd className="mt-1">
+                  <a href={`tel:${CAFE.phone.replace(/\s/g, "")}`} className="hover:text-accent">
+                    {CAFE.phone}
+                  </a>
+                </dd>
               </div>
             </dl>
             <div className="mt-8 flex flex-wrap gap-3">

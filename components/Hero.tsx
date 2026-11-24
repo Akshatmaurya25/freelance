@@ -7,7 +7,7 @@ import gsap from "gsap";
 import { SplitText } from "gsap/SplitText";
 import { useGSAP } from "@gsap/react";
 import { GAMES, STATIONS } from "@/lib/stations";
-import { Logo } from "./Logo";
+import { CAFE } from "@/lib/cafe";
 
 gsap.registerPlugin(useGSAP, SplitText);
 
@@ -146,7 +146,7 @@ export default function Hero() {
         </div>
 
         <div className="relative mx-auto h-[360px] w-full max-w-md [perspective:1200px] sm:h-[440px]">
-          <Logo className="absolute inset-x-0 top-1/2 mx-auto w-4/5 -translate-y-1/2 opacity-25 blur-[2px]" />
+          <CAFE.Logo className="absolute inset-x-0 top-1/2 mx-auto w-4/5 -translate-y-1/2 opacity-25 blur-[2px]" />
           <div data-stack className="absolute inset-0 [transform-style:preserve-3d]">
             {STACK.map((g, i) => (
               <div
